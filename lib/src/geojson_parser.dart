@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
+import 'dart:math';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -75,19 +76,18 @@ class GeoJsonParser {
   void Function(Map<String, dynamic>)? onMarkerTapCallback;
 
   /// default constructor - all parameters are optional and can be set later with setters
-  GeoJsonParser(
-      {this.markerCreationCallback,
-      this.polyLineCreationCallback,
-      this.polygonCreationCallback,
-      this.defaultMarkerColor,
-      this.defaultMarkerIcon,
-      this.onMarkerTapCallback,
-      this.defaultPolylineColor,
-      this.defaultPolylineStroke,
-      this.defaultPolygonBorderColor,
-      this.defaultPolygonFillColor,
-      this.defaultPolygonBorderStroke,
-      this.defaultPolygonIsFilled});
+  GeoJsonParser({this.markerCreationCallback,
+    this.polyLineCreationCallback,
+    this.polygonCreationCallback,
+    this.defaultMarkerColor,
+    this.defaultMarkerIcon,
+    this.onMarkerTapCallback,
+    this.defaultPolylineColor,
+    this.defaultPolylineStroke,
+    this.defaultPolygonBorderColor,
+    this.defaultPolygonFillColor,
+    this.defaultPolygonBorderStroke,
+    this.defaultPolygonIsFilled});
 
   /// parse GeJson in [String] format
   void parseGeoJsonAsString(String g) {
@@ -157,6 +157,7 @@ class GeoJsonParser {
 
     // loop through the GeoJson Map and parse it
     for (Map f in g['features'] as List) {
+      if (f['geometry'] == null) continue;
       String geometryType = f['geometry']['type'].toString();
       switch (geometryType) {
         case 'Point':
@@ -213,11 +214,16 @@ class GeoJsonParser {
               for (final coords in path as List<dynamic>) {
                 if (pathIndex == 0) {
                   // add to polygon's outer ring
-                  outerRing
-                      .add(LatLng(coords[1] as double, coords[0] as double));
+                  outerRing.add(LatLng(
+                    (coords[1] as num).toDouble(),
+                    (coords[0] as num).toDouble(),
+                  ));
                 } else {
                   // add it to current hole
-                  hole.add(LatLng(coords[1] as double, coords[0] as double));
+                  hole.add(LatLng(
+                    (coords[1] as num).toDouble(),
+                    (coords[0] as num).toDouble(),
+                  ));
                 }
               }
               if (pathIndex > 0) {
@@ -236,16 +242,21 @@ class GeoJsonParser {
               final List<LatLng> outerRing = [];
               final List<List<LatLng>> holesList = [];
               int pathIndex = 0;
-              for (final path in polygon as List) {
+              for (final path in polygon as List<dynamic>) {
                 List<LatLng> hole = [];
-                for (final coords in path as List<dynamic>) {
+                for (final coords in path) {
                   if (pathIndex == 0) {
                     // add to polygon's outer ring
-                    outerRing
-                        .add(LatLng(coords[1] as double, coords[0] as double));
+                    outerRing.add(LatLng(
+                      (coords[1] as num).toDouble(),
+                      (coords[0] as num).toDouble(),
+                    ));
                   } else {
                     // add it to a hole
-                    hole.add(LatLng(coords[1] as double, coords[0] as double));
+                    hole.add(LatLng(
+                      (coords[1] as num).toDouble(),
+                      (coords[0] as num).toDouble(),
+                    ));
                   }
                 }
                 if (pathIndex > 0) {
@@ -287,8 +298,8 @@ class GeoJsonParser {
   }
 
   /// default callback function for creating [Polyline]
-  Polyline createDefaultPolyline(
-      List<LatLng> points, Map<String, dynamic> properties) {
+  Polyline createDefaultPolyline(List<LatLng> points,
+      Map<String, dynamic> properties) {
     return Polyline(
         points: points,
         color: defaultPolylineColor!,
