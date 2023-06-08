@@ -231,7 +231,7 @@ class _MyHomePageState extends State<MyHomePage> {
         body: FlutterMap(
           mapController: MapController(),
           options: MapOptions(
-            center: LatLng(45.993807, 14.483972),
+            center: const LatLng(45.993807, 14.483972),
             //center: LatLng(45.720405218, 14.406593302),
             zoom: 14,
           ),
