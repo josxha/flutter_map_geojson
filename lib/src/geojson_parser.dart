@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -217,14 +218,14 @@ class GeoJsonParser {
                 if (pathIndex == 0) {
                   // add to polygon's outer ring
                   outerRing.add(LatLng(
-                    (coords[1] as num).toDouble(),
-                    (coords[0] as num).toDouble(),
+                    min(90, max(-90, (coords[1] as num).toDouble())),
+                    min(180, max(-180, (coords[0] as num).toDouble())),
                   ));
                 } else {
                   // add it to current hole
                   hole.add(LatLng(
-                    (coords[1] as num).toDouble(),
-                    (coords[0] as num).toDouble(),
+                    min(90, max(-90, (coords[1] as num).toDouble())),
+                    min(180, max(-180, (coords[0] as num).toDouble())),
                   ));
                 }
               }
@@ -250,14 +251,14 @@ class GeoJsonParser {
                   if (pathIndex == 0) {
                     // add to polygon's outer ring
                     outerRing.add(LatLng(
-                      (coords[1] as num).toDouble(),
-                      (coords[0] as num).toDouble(),
+                      min(90, max(-90, (coords[1] as num).toDouble())),
+                      min(180, max(-180, (coords[0] as num).toDouble())),
                     ));
                   } else {
                     // add it to a hole
                     hole.add(LatLng(
-                      (coords[1] as num).toDouble(),
-                      (coords[0] as num).toDouble(),
+                      min(90, max(-90, (coords[1] as num).toDouble())),
+                      min(180, max(-180, (coords[0] as num).toDouble())),
                     ));
                   }
                 }
