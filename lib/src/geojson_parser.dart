@@ -156,6 +156,7 @@ class GeoJsonParser {
     defaultPolygonBorderStroke ??= 1.0;
 
     // loop through the GeoJson Map and parse it
+    if (g['features'] == null) return;
     for (Map f in g['features'] as List) {
       if (f['geometry'] == null) continue;
       String geometryType = f['geometry']['type'].toString();
