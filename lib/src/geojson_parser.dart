@@ -185,8 +185,8 @@ class GeoJsonParser {
             final List<LatLng> lineString = [];
             for (final coords in f['geometry']['coordinates'] as List) {
               lineString.add(LatLng(
-                (coords[1] as num).toDouble(),
-                (coords[0] as num).toDouble(),
+                min(90, max(-90, (coords[1] as num).toDouble())),
+                min(180, max(-180, (coords[0] as num).toDouble())),
               ));
             }
             polylines.add(polyLineCreationCallback!(
